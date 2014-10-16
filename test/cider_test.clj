@@ -1,4 +1,4 @@
-(ns hatnik.db.memory-storage-test
+(ns cider-test
   (:require [clojure.test :refer :all]
             [taoensso.timbre :as timbre]))
 
