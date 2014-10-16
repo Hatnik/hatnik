@@ -5,7 +5,7 @@
 3. Set `nrepl-log-messages` to `t`.
 4. Run all tests using `C-c ,`.
 5. Open `*nrepl-messages*`. One of messages doesn't have an id.
-Example:
+Example, check 5th message:
 ```text
 (--->
   op  "load-file"
