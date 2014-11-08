@@ -8,7 +8,7 @@
   (:use [jayq.core :only [$]]))
 
 
-(defn- project-menu [data owner]
+(defn- project-form [data owner]
   (reify
     om/IInitState
     (init-state [this]
@@ -63,7 +63,7 @@
 (defn show []
   (.modal ($ "#project-form")))
 
-(om/root project-menu
+(om/root project-form
          app-state
          {:target (.getElementById js/document "project-form")
           :path [:project-form]})
