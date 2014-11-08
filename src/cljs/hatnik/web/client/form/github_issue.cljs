@@ -35,14 +35,13 @@
     om/IInitState
     (init-state [this]
       {:repo-status
-       (let [v (:value (:repo data))]
+       (let [v (:github-repo data)]
          (if (or (nil? v) (= "" v))
            "has-warning"
            "has-success"))
        :title-status "has-success"
        :body-status "has-success"
-       :timer nil
-       })
+       :timer nil})
     om/IRenderState
     (render-state [this state]
       (dom/div nil
@@ -52,13 +51,13 @@
                         (dom/input #js {:type "text"
                                         :className "form-control"
                                         :id "gh-repo"
-                                        :value (:value (:repo data))
+                                        :value (:github-repo data)
                                         :placeholder "user/repository or organization/repository"
 
                                         :onChange
                                         #(let [repo (.. % -target -value)]
                                            (github-issue-on-change repo (:timer state) owner)
-                                           ((-> data :repo :handler) repo))}))
+                                           (om/update! data :github-repo repo))}))
 
                (dom/div #js {:className (str "form-group " (:title-status state))}
                         (dom/label #js {:htmlFor "gh-issue-title"
@@ -66,11 +65,11 @@
                         (dom/input #js {:type "text"
                                         :className "form-control"
                                         :id "gh-issue-title"
-                                        :value (:value (:title data))
-                                        :onChange #(do
-                                                     ((:handler (:title data)) (.. % -target -value))
+                                        :value (:title data)
+                                        :onChange #(let [title (.. % -target -value)]
+                                                     (om/update! data :title title)
                                                      (om/set-state! owner :title-status
-                                                                    (if (s/check schm/TemplateTitle (.. % -target -value))
+                                                                    (if (s/check schm/TemplateTitle title)
                                                                       "has-error"
                                                                       "has-success")))}))
                (dom/div #js {:className (str "form-group " (:body-status state))}
@@ -79,10 +78,10 @@
                         (dom/textarea #js {:cols "40"
                                            :className "form-control"
                                            :id "gh-issue-body"
-                                           :value (:value (:body data))
-                                           :onChange #(do
-                                                        ((:handler (:body data)) (.. % -target -value))
+                                           :value (:body data)
+                                           :onChange #(let [body (.. % -target -value)]
+                                                        (om/update! data :body body)
                                                         (om/set-state! owner :body-status
-                                                                       (if (s/check schm/TemplateBody (.. % -target -value))
+                                                                       (if (s/check schm/TemplateBody body)
                                                                          "has-error"
                                                                          "has-success")))}))))))
