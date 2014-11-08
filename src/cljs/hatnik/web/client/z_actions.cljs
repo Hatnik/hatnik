@@ -44,14 +44,13 @@
     (when (= "ok" (get resp "result"))
       (state/update-all-view))))
 
-
-(defn ^:export send-new-project-request []
-  (let [name (.-value (.getElementById js/document "project-name-input"))]
-    (if (s/check schm/Project {:name name})
-      (msg/danger "Project name cannot be empty.")
+(defn create-project [project-name]
+  (let [project {:name project-name}]
+    (if (s/check schm/Project project)
+      (msg/danger "Project name should be between 1 and 128 character long.")
       (do
-        (.modal ($ :#iModalProject) "hide")
-        (ajax  "/api/projects" "POST" {:name name} #(create-new-project-callback name %))))))
+        (.modal ($ :#iModalProjectMenu) "hide")
+        (ajax "/api/projects" "POST" project #(create-new-project-callback project-name %))))))
 
 (defn create-new-action-callback [data reply]
   (let [resp (js->clj reply)]

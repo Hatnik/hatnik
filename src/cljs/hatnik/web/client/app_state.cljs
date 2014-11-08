@@ -3,7 +3,9 @@
 (def app-state 
   (atom {; Here we store data from the server
          :projects []
-         :user {}}))
+         :user {}
+         :project-form {:name ""
+                        :id nil}}))
 
 (defn update-projects-list [reply]
   (let [json (.getResponseJson (.-target reply))
@@ -29,9 +31,8 @@
              assoc-in [:user :email]
              (get data "email")))))
 
-(defn set-current-project [id]
-  (swap! app-state 
-         assoc :current-project id))
+(defn set-current-project [id name]
+  (swap! app-state  assoc :project-form {:id id :name name}))
 
 (defn update-all-view []
   (.send goog.net.XhrIo "/api/projects" update-projects-list) )

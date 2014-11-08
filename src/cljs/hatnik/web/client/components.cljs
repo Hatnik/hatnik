@@ -3,14 +3,13 @@
             [om.dom :as dom :include-macros true]
             [hatnik.web.client.app-state :as state]
             [hatnik.web.client.form.add-action :as add-action]
-            [hatnik.web.client.form.project-menu :as pmenu]
+            [hatnik.web.client.form.project :as project]
             [hatnik.web.client.z-actions :as action])
   (:use [jayq.core :only [$]]))
 
 (defn ^:export add-new-project []
-  (let [project-name-input (.getElementById js/document "project-name-input")]
-    (set! (.-value project-name-input) "")
-    (.modal ($ :#iModalProject))))
+  (state/set-current-project nil "")
+  (project/show))
 
 (defn add-new-action-card [data owner]
   (reify
@@ -101,8 +100,9 @@
              (dom/button
               #js {:className "btn btn-default"
                    :type "button"
-                   :onClick #(pmenu/show :project-id id
-                                         :name name)}
+                   :onClick #(do
+                               (state/set-current-project id name)
+                               (project/show))}
               (dom/span #js {:className "glyphicon glyphicon-pencil pull-right"})))))
 
 (defn project-view [prj owner]
