@@ -20,7 +20,7 @@
   (hc/html
    [:div#iModal.modal.fade {:data-keyboard "true"}]
    [:div#iModalAddAction.modal.fade {:data-keyboard "true"}]
-   [:div#iModalProjectMenu.modal.fade ]))
+   [:div#project-form.modal.fade ]))
 
 (defn page-menu [config user]
   [:nav.navbar.navbar-default {:role "navigation"}

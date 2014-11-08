@@ -49,7 +49,7 @@
     (if (s/check schm/Project project)
       (msg/danger "Project name should be between 1 and 128 character long.")
       (do
-        (.modal ($ :#iModalProjectMenu) "hide")
+        (.modal ($ :#project-form) "hide")
         (ajax "/api/projects" "POST" project #(create-new-project-callback project-name %))))))
 
 (defn create-new-action-callback [data reply]
@@ -179,7 +179,7 @@
        #(common-update-callback "Couldn't delete the action. Please file a bug if the issue persists." {} %))))
 
 (defn ^:export delete-project [project-id]
-  (.modal ($ :#iModalProjectMenu) "hide")
+  (.modal ($ :#project-form) "hide")
   (ajax
    (str "/api/projects/" project-id) "DELETE"
    {} (wrap-error-alert
@@ -190,7 +190,7 @@
     (if (s/check schm/Project data)
       (msg/danger default-error-message)
       (do
-        (.modal ($ :#iModalProjectMenu) "hide")
+        (.modal ($ :#project-form) "hide")
         (ajax
          (str "/api/projects/" project-id) "PUT"  data
          (wrap-error-alert #(common-update-callback "Couldn't rename the project. Please file a bug if the issue persists." {} %)))))))

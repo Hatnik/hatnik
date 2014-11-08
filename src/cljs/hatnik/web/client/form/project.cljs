@@ -61,9 +61,9 @@
                              "Delete")))))))))
 
 (defn show []
-  (.modal ($ "#iModalProjectMenu")))
+  (.modal ($ "#project-form")))
 
 (om/root project-menu
          app-state
-         {:target (.getElementById js/document "iModalProjectMenu")
+         {:target (.getElementById js/document "project-form")
           :path [:project-form]})

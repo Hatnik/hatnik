@@ -12,6 +12,5 @@
            (fn [e]
              (when (= 27 (.-keyCode e))
                (.modal ($ :#iModal) "hide")
-               (.modal ($ :#iModalProject) "hide")
-               (.modal ($ :#iModalProjectMenu) "hide")
+               (.modal ($ :#project-form) "hide")
                (.modal ($ :#iModalAddAction) "hide"))))
