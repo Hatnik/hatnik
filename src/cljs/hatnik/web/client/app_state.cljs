@@ -6,7 +6,7 @@
    :id nil
    :project-id nil
    :type "noop"
-   :address ""
+   :email ""
    :title "{{library}} {{version}} released"
    :body (str "{{library}} {{version}} has been released\n\n"
               "Previous version was {{previous-version}}\n\n")
@@ -38,11 +38,14 @@
 
 (defn update-user-data [reply]
   (let [json (.getResponseJson (.-target reply))
-        data (js->clj json)]
+        data (js->clj json)
+        email (get data "email")]
     (when (= "ok" (get data "result"))
       (swap! app-state
-             assoc-in [:user :email]
-             (get data "email")))))
+             (fn [state]
+               (-> state
+                   (assoc-in [:user :email] email)
+                   (assoc-in [:action-form :email] email)))))))
 
 (defn set-current-project [id name]
   (swap! app-state  assoc :project-form {:id id :name name}))
