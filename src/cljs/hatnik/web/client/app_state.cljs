@@ -1,11 +1,24 @@
 (ns hatnik.web.client.app-state)
 
-(def app-state 
+(def empty-action-form
+  {:library ""
+   :library-version nil
+   :id nil
+   :project-id nil
+   :type "noop"
+   :address ""
+   :title "{{library}} {{version}} released"
+   :body (str "{{library}} {{version}} has been released\n\n"
+              "Previous version was {{previous-version}}\n\n")
+   :github-repo ""})
+
+(def app-state
   (atom {; Here we store data from the server
          :projects []
          :user {}
          :project-form {:name ""
-                        :id nil}}))
+                        :id nil}
+         :action-form empty-action-form}))
 
 (defn update-projects-list [reply]
   (let [json (.getResponseJson (.-target reply))

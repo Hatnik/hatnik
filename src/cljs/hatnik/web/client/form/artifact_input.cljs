@@ -32,11 +32,10 @@
     om/IInitState
     (init-state [this]
       {:timer nil
-       :form-status (if (= "" (:value data))
+       :form-status (if (= "" (:library data))
                       "has-warning"
                       "has-success")
-       :value (:value data)
-       :version (:version data)
+       :version (:library-version data)
        :request-in-progress? false})
 
     om/IRenderState
@@ -51,8 +50,8 @@
                         :placeholder "e.g. org.clojure/clojure"
                         :onChange #(let [library (.. % -target -value)]
                                      (check-library-exists owner (:timer state) library)
-                                     ((:handler data) library))
-                        :value (:value data)})
+                                     (om/update! data :library library))
+                        :value (:library data)})
                (dom/span #js {:className "form-control-feedback"}
                  (cond (= (:form-status state) "has-error") "Not found"
                        (= (:form-status state) "has-success") (:version state)
