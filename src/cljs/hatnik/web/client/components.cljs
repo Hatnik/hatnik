@@ -15,12 +15,9 @@
   (reify
     om/IRender
     (render [this]
-      (let [id (:project-id data)
-            email (:user-email data)]
+      (let [id (:project-id data)]
       (dom/div #js {:className "panel panel-default action add-action"
-                    :onClick #(add-action/show :type :add 
-                                               :project-id id
-                                               :user-email email)}
+                    :onClick #(add-action/show-empty-action-form id)}
                (dom/div #js {:className "panel-body"}
                         (dom/span #js {:className "glyphicon glyphicon-plus"})
                         " Add action"))))))
@@ -51,17 +48,12 @@
   (reify
     om/IRender
     (render [this]
-      (let [id (:project-id data)
-            email (:user-email data)
-            library (get data "library")
+      (let [library (get data "library")
             library-class (if (< (count library) 27)
                             "" ; regular class
                             "long-name")]
         (dom/div #js {:className "panel panel-default action"
-                      :onClick #(add-action/show :type :update
-                                                 :project-id id
-                                                 :user-email email
-                                                 :action @data)}
+                      :onClick #(add-action/show-action-form @data)}
                  (dom/div #js {:className "panel-body"}
                    (render-action-type (:type data))
                    (dom/div #js {:className (str "library-name " library-class)

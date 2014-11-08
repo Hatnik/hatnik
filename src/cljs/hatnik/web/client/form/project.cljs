@@ -61,9 +61,14 @@
                              "Delete")))))))))
 
 (defn show []
-  (.modal ($ "#project-form")))
-
-(om/root project-form
+  ; Attaching root on each invocation of show function.
+  ; That way component will be recreated and fresh local state is used.
+  ; If we attach root only once, local state stays the same between
+  ; different projects.
+  (om/root project-form
          app-state
          {:target (.getElementById js/document "project-form")
           :path [:project-form]})
+  (.modal ($ "#project-form")))
+
+
