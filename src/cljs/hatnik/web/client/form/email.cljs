@@ -25,22 +25,22 @@
                         (dom/input #js {:type "text"
                                         :className "form-control"
                                         :id "email-subject-input"
-                                        :value (-> data :subject :value)
-                                        :onChange #(do
-                                                     ((-> data :subject :handler) (.. % -target -value))
+                                        :value (:title data)
+                                        :onChange #(let [title (.. % -target -value)]
+                                                     (om/update! data :title title)
                                                      (om/set-state! owner :subject-status
-                                                                    (if (s/check schm/TemplateTitle (.. % -target -value))
-                                                                      "has-error"
-                                                                      "has-success")))}))
+                                                                   (if (s/check schm/TemplateTitle title)
+                                                                     "has-error"
+                                                                     "has-success")))}))
                (dom/div #js {:className (str "form-group " (:body-status state))}
                         (dom/label #js {:htmlFor "email-body-input"
                                         :className "control-label"} "Body")
                         (dom/textarea #js {:cols "40"
                                            :className "form-control"
                                            :id "email-body-input"
-                                           :value (-> data :body :value)
-                                           :onChange #(do
-                                                        ((-> data :body :handler) (.. % -target -value))
+                                           :value (:body data)
+                                           :onChange #(let [body (.. % -target -value)]
+                                                        (om/update! data :body body)
                                                         (om/set-state! owner :body-status
                                                                        (if (s/check schm/TemplateBody (.. % -target -value))
                                                                          "has-error"
