@@ -57,31 +57,33 @@
     (when (= "ok" (get resp "result"))
       (state/update-all-view))))
 
-(defn build-email-action [data-pack]
-  {:project-id (:project-id data-pack)
+(defn build-email-action
+  [{:keys [project-id body title library]}]
+  {:project-id project-id
    :type "email"
-   :body (:email-body data-pack)
-   :subject (:email-subject data-pack)
-   :library (:artifact-value data-pack)})
+   :body body
+   :subject title
+   :library library})
 
-(defn build-gh-issue-action [data-pack]
-  {:project-id (:project-id data-pack)
+(defn build-gh-issue-action
+  [{:keys [project-id body title library github-repo]}]
+  {:project-id project-id
    :type "github-issue"
-   :repo (:gh-repo data-pack)
-   :title (:gh-issue-title data-pack)
-   :body (:gh-issue-body data-pack)
-   :library (:artifact-value data-pack)})
+   :repo github-repo
+   :title title
+   :body body
+   :library library})
 
-(defn build-noop-action [data-pack]
+(defn build-noop-action
+  [{:keys [project-id library]}]
   {:type "noop"
-   :project-id (:project-id data-pack)
-   :library (:artifact-value data-pack)})
+   :project-id project-id
+   :library library})
 
+(defmulti send-new-action :type)
 
-(defmulti send-new-action #(:type %))
-
-(defmethod send-new-action :email [data-pack]
-  (let [data (build-email-action data-pack)]
+(defmethod send-new-action "email" [action-form]
+  (let [data (build-email-action action-form)]
     (if (s/check schm/EmailAction data)
       (msg/danger default-error-message)
       (do
@@ -89,8 +91,8 @@
         (ajax "/api/actions" "POST" data
               (wrap-error-alert #(create-new-action-callback data %)))))))
 
-(defmethod send-new-action :noop [data-pack]
-  (let [data (build-noop-action data-pack)]
+(defmethod send-new-action "noop" [action-form]
+  (let [data (build-noop-action action-form)]
     (if (s/check schm/NoopAction data)
       (msg/danger default-error-message)
       (do
@@ -98,8 +100,8 @@
         (ajax "/api/actions" "POST" data
               (wrap-error-alert #(create-new-action-callback data %)))))))
 
-(defmethod send-new-action :github-issue [data-pack]
-  (let [data (build-gh-issue-action data-pack)]
+(defmethod send-new-action "github-issue" [action-form]
+  (let [data (build-gh-issue-action action-form)]
     (if (s/check schm/GithubIssueAction data)
       (msg/danger default-error-message)
       (do
@@ -108,9 +110,9 @@
               (wrap-error-alert #(create-new-action-callback data %)))))))
 
 
-(defmulti test-action #(:type %1))
-(defmethod test-action :email [data-pack done-callback]
-  (let [data (build-email-action data-pack)]
+(defmulti test-action :type)
+(defmethod test-action "email" [action-form done-callback]
+  (let [data (build-email-action action-form)]
     (if (s/check schm/EmailAction data)
       (do (msg/danger default-error-message)
           (done-callback))
@@ -122,8 +124,8 @@
                (done-callback)
                (msg/success "The email is sent. Check your inbox."))))))))
 
-(defmethod test-action :github-issue [data-pack done-callback]
-  (let [data (build-gh-issue-action data-pack)]
+(defmethod test-action "github-issue" [action-form done-callback]
+  (let [data (build-gh-issue-action action-form)]
     (if (s/check schm/GithubIssueAction data)
       (do (msg/danger default-error-message)
           (done-callback))
@@ -137,37 +139,37 @@
 
 (def action-update-error-message "Couldn't update the action. Please file a bug if the issue persists.")
 
-(defmulti update-action #(:type %))
-(defmethod update-action :email [data-pack]
-  (let [data (build-email-action data-pack)]
+(defmulti update-action :type)
+(defmethod update-action "email" [action-form]
+  (let [data (build-email-action action-form)]
     (if (s/check schm/EmailAction data)
       (msg/danger default-error-message)
       (do
         (.modal ($ :#iModalAddAction) "hide")
         (ajax
-         (str "/api/actions/" (:action-id data-pack)) "PUT"
+         (str "/api/actions/" (:id action-form)) "PUT"
          data (wrap-error-alert
                #(common-update-callback action-update-error-message data %)))))))
 
-(defmethod update-action :noop [data-pack]
-  (let [data (build-noop-action data-pack)]
+(defmethod update-action "noop" [action-form]
+  (let [data (build-noop-action action-form)]
     (if (s/check schm/NoopAction data)
       (msg/danger default-error-message)
       (do
         (.modal ($ :#iModalAddAction) "hide")
         (ajax
-         (str "/api/actions/" (:action-id data-pack)) "PUT"
+         (str "/api/actions/" (:id action-form)) "PUT"
          data (wrap-error-alert
                #(common-update-callback action-update-error-message data %)))))))
 
-(defmethod update-action :github-issue [data-pack]
-  (let [data (build-gh-issue-action data-pack)]
+(defmethod update-action "github-issue" [action-form]
+  (let [data (build-gh-issue-action action-form)]
     (if (s/check schm/GithubIssueAction data)
       (msg/danger default-error-message)
       (do
         (.modal ($ :#iModalAddAction) "hide")
         (ajax
-         (str "/api/actions/" (:action-id data-pack)) "PUT"
+         (str "/api/actions/" (:id action-form)) "PUT"
          data (wrap-error-alert
                #(common-update-callback action-update-error-message data %)))))))
 

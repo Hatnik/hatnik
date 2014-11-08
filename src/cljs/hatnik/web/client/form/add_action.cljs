@@ -37,10 +37,10 @@
                (if (:id data)
                  (dom/button
                   #js {:className "btn btn-primary pull-left"
-                       :onClick #(action/update-action data)} "Update")
+                       :onClick #(action/update-action @data)} "Update")
                  (dom/button
                   #js {:className "btn btn-primary pull-left"
-                       :onClick #(action/send-new-action data)} "Submit"))
+                       :onClick #(action/send-new-action @data)} "Submit"))
 
                (when-not (= "noop" (:type data))
                  (if (:test-in-progress? state)
@@ -52,7 +52,7 @@
                     #js {:className "btn btn-default"
                          :onClick (fn []
                                     (om/set-state! owner :test-in-progress? true)
-                                    (action/test-action data
+                                    (action/test-action @data
                                                         #(om/set-state! owner :test-in-progress? false)))}
                     "Test")))))))
 
@@ -64,7 +64,7 @@
           (when (:id data)
             (dom/button
              #js {:className "btn btn-danger pull-right"
-                  :onClick #(action/delete-action (:id data))}
+                  :onClick #(action/delete-action (:id @data))}
              "Delete"))))
 
 (defn- add-action-component [data owner]
