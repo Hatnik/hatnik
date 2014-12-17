@@ -62,14 +62,14 @@
    (fn [driver]
      (let [[project] (find-projects-on-page driver)]
 
-                                        ; Create action for quil
+       ; Create action for quil
        (create-action-simple driver project "quil")
        (wait-until-projects-match driver
                                   [{:name "Default"
                                     :actions [{:library "quil"
                                                :type "email"}]}])
 
-                                        ; Create action for org.clojure/clojure
+       ; Create action for org.clojure/clojure
        (create-action-simple driver project "org.clojure/clojure")
        (wait-until-projects-match driver
                                   [{:name "Default"
@@ -78,7 +78,7 @@
                                               {:library "org.clojure/clojure"
                                                :type "email"}]}])
 
-                                        ; Delete quil action.
+       ; Delete quil action.
        (delete-action driver
                       (-> driver find-projects-on-page first :actions first))
        (wait-until-projects-match driver
@@ -96,6 +96,7 @@
 (defn change-action-type [driver type]
   (let [select (find-element driver "#action-type")]
     (.selectByValue (Select. select) type)
+    (Thread/sleep 2000)
     ; Yet another hack. For some reason action type not always selected
     ; completely. We fix it by clicking on select element.
     (.click select)))
@@ -152,7 +153,9 @@
      ; Create action
      (let [[project] (find-projects-on-page driver)]
        (open-add-action-dialog driver project)
+       (Thread/sleep 2000)
        (change-action-type driver "github-issue")
+       (Thread/sleep 2000)
        (set-input-text-from-map driver
                                 {:library-input "quil"
                                  :gh-repo "nbeloglazov/hatnik"
