@@ -96,6 +96,7 @@
 (defn change-action-type [driver type]
   (doseq [option (find-elements driver "#action-type option")
           :when (= (.getAttribute option "value") type)]
+    (println "Clicking on" type "option")
     (.click option)))
 
 (defn set-input-text-from-map [driver map]
