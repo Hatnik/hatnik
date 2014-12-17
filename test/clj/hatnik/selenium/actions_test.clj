@@ -94,12 +94,9 @@
                                     :actions []}])))))
 
 (defn change-action-type [driver type]
-  (let [select (find-element driver "#action-type")]
-    (.selectByValue (Select. select) type)
-    (Thread/sleep 2000)
-    ; Yet another hack. For some reason action type not always selected
-    ; completely. We fix it by clicking on select element.
-    (.click select)))
+  (doseq [option (find-elements driver "#action-type option")
+          :when (= (.getAttribute option "value") type)]
+    (.click option)))
 
 (defn set-input-text-from-map [driver map]
   (doseq [[id text] map]
@@ -153,9 +150,7 @@
      ; Create action
      (let [[project] (find-projects-on-page driver)]
        (open-add-action-dialog driver project)
-       (Thread/sleep 2000)
        (change-action-type driver "github-issue")
-       (Thread/sleep 2000)
        (set-input-text-from-map driver
                                 {:library-input "quil"
                                  :gh-repo "nbeloglazov/hatnik"
@@ -206,7 +201,6 @@
   (open-add-action-dialog driver (first (find-projects-on-page driver)))
 
   (change-action-type driver "email")
-  
 
   (add-action-simple driver (first (find-projects-on-page driver))
                      "ring")
